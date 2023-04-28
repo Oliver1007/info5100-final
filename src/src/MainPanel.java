@@ -21,7 +21,7 @@ public class MainPanel extends javax.swing.JFrame {
         trackingButton.setVisible(false);
         distributeButton.setVisible(false);
         managerButton.setVisible(false);
-        trainsferStationButton.setVisible(false);
+        driverButton.setVisible(false);
     }
 
     /**
@@ -39,7 +39,7 @@ public class MainPanel extends javax.swing.JFrame {
         trackingButton = new javax.swing.JButton();
         distributeButton = new javax.swing.JButton();
         managerButton = new javax.swing.JButton();
-        trainsferStationButton = new javax.swing.JButton();
+        driverButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
         bottomPanel = new javax.swing.JPanel();
 
@@ -79,13 +79,13 @@ public class MainPanel extends javax.swing.JFrame {
         });
         topPanel.add(managerButton);
 
-        trainsferStationButton.setText("transferstationPanel");
-        trainsferStationButton.addActionListener(new java.awt.event.ActionListener() {
+        driverButton.setText("driverPanel");
+        driverButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trainsferStationButtonActionPerformed(evt);
+                driverButtonActionPerformed(evt);
             }
         });
-        topPanel.add(trainsferStationButton);
+        topPanel.add(driverButton);
 
         logoutButton.setText("logout");
         logoutButton.addActionListener(new java.awt.event.ActionListener() {
@@ -142,12 +142,12 @@ public class MainPanel extends javax.swing.JFrame {
         layout.next(bottomPanel);// TODO add your handling code here:
     }//GEN-LAST:event_managerButtonActionPerformed
 
-    private void trainsferStationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainsferStationButtonActionPerformed
-        transferStationPanel transferStationPanel = new transferStationPanel();
-        splitPanel.setBottomComponent(transferStationPanel);
+    private void driverButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_driverButtonActionPerformed
+        DriverPanel driverPanel = new DriverPanel();
+        splitPanel.setBottomComponent(driverPanel);
         CardLayout layout = (CardLayout) bottomPanel.getLayout();
         layout.next(bottomPanel);// TODO add your handling code here:
-    }//GEN-LAST:event_trainsferStationButtonActionPerformed
+    }//GEN-LAST:event_driverButtonActionPerformed
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         // TODO add your handling code here:
@@ -163,12 +163,12 @@ public class MainPanel extends javax.swing.JFrame {
         } else if (s.equals("distribute")) {
             distributeButton.setVisible(true);
         } else if (s.equals("transfer")) {
-            trainsferStationButton.setVisible(true);
+            driverButton.setVisible(true);
         } else if (s.equals("manager")) {
             managerButton.setVisible(true);
         } else {
             managerButton.setVisible(true);
-            trainsferStationButton.setVisible(true);
+            driverButton.setVisible(true);
             distributeButton.setVisible(true);
             shippingButton.setVisible(true);
             trackingButton.setVisible(true);
@@ -178,12 +178,12 @@ public class MainPanel extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JButton distributeButton;
+    private javax.swing.JButton driverButton;
     private javax.swing.JButton logoutButton;
     private javax.swing.JButton managerButton;
     private javax.swing.JButton shippingButton;
     private javax.swing.JSplitPane splitPanel;
     private javax.swing.JPanel topPanel;
     private javax.swing.JButton trackingButton;
-    private javax.swing.JButton trainsferStationButton;
     // End of variables declaration//GEN-END:variables
 }

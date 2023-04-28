@@ -46,6 +46,8 @@
               <JSplitPaneConstraints position="top"/>
             </Constraint>
           </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
           <SubComponents>
             <Component class="javax.swing.JButton" name="shippingButton">
               <Properties>
@@ -79,12 +81,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="managerButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="trainsferStationButton">
+            <Component class="javax.swing.JButton" name="driverButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="transferstationPanel"/>
+                <Property name="text" type="java.lang.String" value="driverPanel"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trainsferStationButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="driverButtonActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="logoutButton">

@@ -244,10 +244,9 @@ public class managerPanel extends javax.swing.JPanel {
             user.setType(typeField.getText());
 
             try {
-                DbUtil.getInstance().removeUserFromUserTable(user.getId());
-                DbUtil.getInstance().addUserToUserTable(user);
+                DbUtil.getInstance().updateUsertoUserTable(user);
             } catch (SQLException ex) {
-                Logger.getLogger(managerPanel.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "can not update to database", "Error - No selection", JOptionPane.WARNING_MESSAGE);
             }
         }
         populateTable();
@@ -285,7 +284,7 @@ public class managerPanel extends javax.swing.JPanel {
             DbUtil.getInstance().addUserToUserTable(user);
             UserDirectory.getInstance().addUser(user);
         } catch (SQLException ex) {
-            Logger.getLogger(managerPanel.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "can not update to database", "Error - No selection", JOptionPane.WARNING_MESSAGE);
         }
         populateTable();
     }                                         
@@ -305,7 +304,7 @@ public class managerPanel extends javax.swing.JPanel {
                 DbUtil.getInstance().removeUserFromUserTable(user.getId());
                 UserDirectory.getInstance().removeUser(user);
             } catch (SQLException ex) {
-                Logger.getLogger(managerPanel.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "can not update to database", "Error - No selection", JOptionPane.WARNING_MESSAGE);
             }
         }
         populateTable();
@@ -315,13 +314,15 @@ public class managerPanel extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) existingTable.getModel();
         model.setRowCount(0);
         for (User u : UserDirectory.getInstance().getUsers()) {
-            Object[] row = new Object[5];
-            row[0] = u;
-            row[1] = u.getLicensePlate();
-            row[2] = u.getLocation();
-            row[3] = u.getStatus();
-            row[4] = u.getType();
-            model.addRow(row);
+            if(u.getType().equals("driver")){
+                Object[] row = new Object[5];
+                row[0] = u;
+                row[1] = u.getLicensePlate();
+                row[2] = u.getLocation();
+                row[3] = u.getStatus();
+                row[4] = u.getType();
+                model.addRow(row);
+            }
         }
     }
 
