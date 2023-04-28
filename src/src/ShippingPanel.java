@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 import model.NumberDirectory;
 import model.Shipment;
 import model.ShipmentDirectory;
+import model.User;
+import model.UserDirectory;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -394,22 +396,66 @@ public class ShippingPanel extends javax.swing.JPanel {
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
         try {
-            // TODO add your handling code here:
-            Shipment ship = new Shipment();
-            ship.setPhoneNum(Integer.parseInt(phoneNumField.getText()));
-            ship.setTrackingNum(NumberDirectory.getInstance().generateRefNum());
-            ship.setDesAddress(deAddressField.getText()+','+deRegionField.getText()+','+deCityField.getText()+','+deProvinceField.getText());
-            ship.setStartAddress(addressField.getText()+','+regionField.getText()+','+cityField.getText()+','+provinceField.getText());
-            ship.setShipEmail(emailField.getText());
-            ship.setRecipientsEmail(reEmailField.getText());
-            ship.setShipper(shipperNameField.getText());
-            ship.setRecipients(recieverNameField.getText());
-            ship.setStartDate( format.parse(dateField.getText()));
-            ship.setPackageInfo(packageStatus());
+            if (shipperIDField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this,"Shipper ID must be filled");
+            }else
+                try{
+                    Integer.parseInt(shipperIDField.getText());
+                }catch(NumberFormatException nfe){
+                    JOptionPane.showMessageDialog(this,"Shipper ID must be numbers only!");
+                }
             
-            ShipmentDirectory.getInstance().addShipment(ship);
-            DbUtil.getInstance().addShipmentToShipTable(ship);
-            JOptionPane.showMessageDialog(this, "Shipment created!");
+            try{
+                Integer.parseInt(phoneNumField.getText());
+                Integer.parseInt(rePhoneNumField.getText());
+            }catch(NumberFormatException nfe){
+                JOptionPane.showMessageDialog(this,"Phone Number must be numbers only!");
+            }
+            
+            if (cityField.getText().isEmpty()||
+                regionField.getText().isEmpty()||
+                provinceField.getText().isEmpty()||
+                addressField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this,"Shipper address must be complete!");
+            }
+            
+            if (deCityField.getText().isEmpty()||
+                deRegionField.getText().isEmpty()||
+                deProvinceField.getText().isEmpty()||
+                deAddressField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this,"Recipient address must be complete!");
+            }
+            
+            if (recieverNameField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Please provide recipient Name");
+            }
+                
+            boolean found = false;
+            for (User shipper: UserDirectory.getInstance().getUsers()){
+                if (shipper.getId()==Integer.parseInt(shipperIDField.getText())){
+                    found = true;
+                    Shipment ship = new Shipment();
+                    ship.setPhoneNum(Integer.parseInt(phoneNumField.getText()));
+                    ship.setTrackingNum(NumberDirectory.getInstance().generateRefNum());
+                    ship.setDesAddress(deAddressField.getText()+','+deRegionField.getText()+','+deCityField.getText()+','+deProvinceField.getText());
+                    ship.setStartAddress(addressField.getText()+','+regionField.getText()+','+cityField.getText()+','+provinceField.getText());
+                    ship.setShipEmail(emailField.getText());
+                    ship.setRecipientsEmail(reEmailField.getText());
+                    ship.setShipper(shipperNameField.getText());
+                    ship.setRecipients(recieverNameField.getText());
+                    ship.setStartDate( format.parse(dateField.getText()));
+                    ship.setPackageInfo(packageStatus());
+            
+                    ShipmentDirectory.getInstance().addShipment(ship);
+                    DbUtil.getInstance().addShipmentToShipTable(ship);
+                    JOptionPane.showMessageDialog(this, "Shipment created!");
+                } 
+            }
+            if (found == false){
+                JOptionPane.showMessageDialog(this,"ID is not found!");
+            }
+            // TODO add your handling code here:
+            
         } catch (ParseException | SQLException ex) {
             Logger.getLogger(ShippingPanel.class.getName()).log(Level.SEVERE, null, ex);
         }

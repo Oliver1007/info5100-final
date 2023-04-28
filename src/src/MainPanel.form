@@ -46,6 +46,8 @@
               <JSplitPaneConstraints position="top"/>
             </Constraint>
           </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
           <SubComponents>
             <Component class="javax.swing.JButton" name="shippingButton">
               <Properties>
