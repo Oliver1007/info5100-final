@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Shipment;
 import model.ShipmentDirectory;
+import model.User;
+import model.UserDirectory;
 
 /**
  *
@@ -163,31 +165,35 @@ public class TrackingPanel extends javax.swing.JPanel {
 
     private void trackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackButtonActionPerformed
         // TODO add your handling code here:
-        for (Shipment s: ShipmentDirectory.getInstance().getShipment()){
-            DefaultTableModel model = (DefaultTableModel) statusTable.getModel();
-            model.setRowCount(0);
-            String[] arrival = {"",""};
-            if (trackNumField.getText().isEmpty()){
+        boolean notFound = true;
+        for (Shipment s : ShipmentDirectory.getInstance().getShipment()) {
+            if (trackNumField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please tracking number cannot be empty!");
-            } else if (s.getTrackingNum() == Integer.parseInt(trackNumField.getText())){
-                int size = s.getArrivals().size();
-                for (int i = 0; i < size; i++ ){
-                    Object[] row = new Object[3];
-                    row[0]=arrival[0];
-                    row[1]=arrival[1];
-                    row[2]=s.getStatus();
-                }
-                
-                
+            } else if (s.getTrackingNum() == Integer.parseInt(trackNumField.getText())) {
+                notFound = false;
                 shipperNameField.setText(s.getShipper());
                 recipientsNameField.setText(s.getRecipients());
-                driverIDField.setText(s.getDriverID()+"");
+                driverIDField.setText(s.getDriverID() + "");
                 destinationField.setText(s.getDesAddress());
-            } else {
-                JOptionPane.showMessageDialog(this, "Tracking number not found");
+                populateTable(s);
             }
         }
+        if (notFound) {
+            JOptionPane.showMessageDialog(this, "Tracking number not found");
+        }
     }//GEN-LAST:event_trackButtonActionPerformed
+
+    public void populateTable(Shipment s) {
+        DefaultTableModel model = (DefaultTableModel) statusTable.getModel();
+        model.setRowCount(0);
+        for (String[] arr : s.getArrivals()) {
+            Object[] row = new Object[3];
+            row[0] = arr[0];
+            row[1] = arr[1];
+            row[2] = s.getStatus();
+            model.addRow(row);
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
