@@ -17,7 +17,6 @@ import model.UserDirectory;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-
 /**
  *
  * @author User
@@ -28,35 +27,36 @@ public class ShippingPanel extends javax.swing.JPanel {
      * Creates new form ShippingPanel
      */
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    
-    public String packageStatus (){
+
+    public String packageStatus() {
         String gas = null;
         String liquid = null;
         String solid = null;
         String flame = null;
         String fragile = null;
         String toxic = null;
-        
-        if (gasBox.isSelected()){
+
+        if (gasBox.isSelected()) {
             gas = "gas";
         }
-        if (liquidBox.isSelected()){
+        if (liquidBox.isSelected()) {
             liquid = "liquid";
         }
-        if (solidBox.isSelected()){
+        if (solidBox.isSelected()) {
             solid = "solid";
         }
-        if (flammableBox.isSelected()){
+        if (flammableBox.isSelected()) {
             flame = "flammable";
         }
-        if (fragileBox.isSelected()){
+        if (fragileBox.isSelected()) {
             fragile = "fragile";
         }
-        if (toxicBox.isSelected()){
+        if (toxicBox.isSelected()) {
             toxic = "toxic";
         }
-        return gas+liquid+solid+flame+toxic;
+        return gas + liquid + solid + flame + toxic;
     }
+
     public ShippingPanel() {
         initComponents();
     }
@@ -395,69 +395,64 @@ public class ShippingPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
+        if (shipperIDField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Shipper ID must be filled");
+        } else
+            try {
+            Integer.parseInt(shipperIDField.getText());
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(this, "Shipper ID must be numbers only!");
+        }
         try {
-            if (shipperIDField.getText().isEmpty()){
-                JOptionPane.showMessageDialog(this,"Shipper ID must be filled");
-            }else
-                try{
-                    Integer.parseInt(shipperIDField.getText());
-                }catch(NumberFormatException nfe){
-                    JOptionPane.showMessageDialog(this,"Shipper ID must be numbers only!");
-                }
-            
-            try{
-                Integer.parseInt(phoneNumField.getText());
-                Integer.parseInt(rePhoneNumField.getText());
-            }catch(NumberFormatException nfe){
-                JOptionPane.showMessageDialog(this,"Phone Number must be numbers only!");
-            }
-            
-            if (cityField.getText().isEmpty()||
-                regionField.getText().isEmpty()||
-                provinceField.getText().isEmpty()||
-                addressField.getText().isEmpty()){
-                JOptionPane.showMessageDialog(this,"Shipper address must be complete!");
-            }
-            
-            if (deCityField.getText().isEmpty()||
-                deRegionField.getText().isEmpty()||
-                deProvinceField.getText().isEmpty()||
-                deAddressField.getText().isEmpty()){
-                JOptionPane.showMessageDialog(this,"Recipient address must be complete!");
-            }
-            
-            if (recieverNameField.getText().isEmpty()){
-                JOptionPane.showMessageDialog(this, "Please provide recipient Name");
-            }
-                
-            boolean found = false;
-            for (User shipper: UserDirectory.getInstance().getUsers()){
-                if (shipper.getId()==Integer.parseInt(shipperIDField.getText())){
+            Integer.parseInt(phoneNumField.getText());
+            Integer.parseInt(rePhoneNumField.getText());
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(this, "Phone Number must be numbers only!");
+        }
+        if (cityField.getText().isEmpty()
+                || regionField.getText().isEmpty()
+                || provinceField.getText().isEmpty()
+                || addressField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Shipper address must be complete!");
+        }
+        if (deCityField.getText().isEmpty()
+                || deRegionField.getText().isEmpty()
+                || deProvinceField.getText().isEmpty()
+                || deAddressField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Recipient address must be complete!");
+        }
+        if (recieverNameField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please provide recipient Name");
+        }
+        boolean found = false;
+        for (User shipper : UserDirectory.getInstance().getUsers()) {
+            if (shipper.getId() == Integer.parseInt(shipperIDField.getText())) {
+                try {
                     found = true;
                     Shipment ship = new Shipment();
                     ship.setPhoneNum(Integer.parseInt(phoneNumField.getText()));
                     ship.setTrackingNum(NumberDirectory.getInstance().generateRefNum());
-                    ship.setDesAddress(deAddressField.getText()+','+deRegionField.getText()+','+deCityField.getText()+','+deProvinceField.getText());
-                    ship.setStartAddress(addressField.getText()+','+regionField.getText()+','+cityField.getText()+','+provinceField.getText());
+                    ship.setDesAddress(deAddressField.getText() + ',' + deRegionField.getText() + ',' + deCityField.getText() + ',' + deProvinceField.getText());
+                    ship.setStartAddress(addressField.getText() + ',' + regionField.getText() + ',' + cityField.getText() + ',' + provinceField.getText());
                     ship.setShipEmail(emailField.getText());
                     ship.setRecipientsEmail(reEmailField.getText());
                     ship.setShipper(shipperNameField.getText());
                     ship.setRecipients(recieverNameField.getText());
-                    ship.setStartDate( format.parse(dateField.getText()));
+                    ship.setStartDate(format.parse(dateField.getText()));
                     ship.setPackageInfo(packageStatus());
-            
+
                     ShipmentDirectory.getInstance().addShipment(ship);
                     DbUtil.getInstance().addShipmentToShipTable(ship);
                     JOptionPane.showMessageDialog(this, "Shipment created!");
-                } 
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(this, "phone number must be number!");
+                } catch (SQLException | ParseException ex) {
+                    JOptionPane.showMessageDialog(this, "Date must be yyyy-mm-dd format!");
+                }
             }
-            if (found == false){
-                JOptionPane.showMessageDialog(this,"ID is not found!");
-            }
-            // TODO add your handling code here:
-            
-        } catch (ParseException | SQLException ex) {
-            Logger.getLogger(ShippingPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (found == false) {
+            JOptionPane.showMessageDialog(this, "ID is not found!");
         }
     }//GEN-LAST:event_submitButtonActionPerformed
 

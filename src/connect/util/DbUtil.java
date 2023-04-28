@@ -63,7 +63,7 @@ public class DbUtil {
     public Connection getConnection() throws ClassNotFoundException {
         try {
             int log = 1;
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/new_database", "root", "991007");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/new_database", "root", "Bran@123");
             st = (Statement) conn.createStatement();
             System.out.println("connection succeed!");
         } catch (SQLException ex) {
@@ -114,6 +114,15 @@ public class DbUtil {
             s.setDesAddress(rs.getString(2));
             s.setStartAddress(rs.getString(3));
             s.setDriverID(rs.getInt(4));
+            s.setShipper(rs.getString(5));
+            s.setRecipients(rs.getString(6));
+            s.setPhoneNum(rs.getInt(7));
+            s.setStartDate(rs.getDate(8));
+            s.setArriveDate(rs.getDate(9));
+            s.setPackageInfo(rs.getString(10));
+            s.setStatus(rs.getString(11));
+            s.setShipEmail(rs.getString(12));
+            s.setRecipientsEmail(rs.getString(13));
 
             ShipmentDirectory.getInstance().addShipment(s);
             importArrivalsToShipment(s);
@@ -164,11 +173,23 @@ public class DbUtil {
     }
 
     public void addShipmentToShipTable(Shipment s) throws SQLException {
-        pst = conn.prepareStatement("insert into t_shipment(tracking_num, des_address, start_address, driver_id)value(?,?,?,?)");
+        pst = conn.prepareStatement("insert into t_shipment(tracking_num, des_address, start_address, driver_id, shipper, "
+                + "recipients, phone_num, start_date, arrive_date, package_info, status, ship_email, recipients_email)"
+                + "value(?,?,?,?,?,?,?,?,?,?,?,?,?)");
         pst.setInt(1, s.getTrackingNum());
         pst.setString(2, s.getDesAddress());
         pst.setString(3, s.getStartAddress());
         pst.setInt(4, s.getDriverID());
+        pst.setString(5, s.getShipper());
+        pst.setString(6, s.getRecipients());
+        pst.setInt(7, s.getPhoneNum());
+        pst.setDate(8, new java.sql.Date(s.getStartDate().getTime()));
+        pst.setDate(9, new java.sql.Date(s.getArriveDate().getTime()));
+        pst.setString(10, s.getPackageInfo());
+        pst.setString(11, s.getStatus());
+        pst.setString(12, s.getShipEmail());
+        pst.setString(13, s.getRecipientsEmail());
+        
         pst.executeUpdate();
     }
 
