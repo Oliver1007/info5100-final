@@ -23,8 +23,6 @@ public class Store extends User {
     }
     private ArrayList<Shipment> shipments;
 
-    
-
     @Override
     public String getType() {
         return Type;

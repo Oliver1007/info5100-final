@@ -269,6 +269,7 @@ public class DriverPanel extends javax.swing.JPanel {
                 s.addArrival(arr);
                 try {
                     DbUtil.getInstance().updateShipmenttoShipmentTable(s);
+                    DbUtil.getInstance().addArrivalsToArrTable(s, arr);
                 } catch (SQLException ex) {
                     Logger.getLogger(DriverPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
