@@ -6,6 +6,9 @@ package src;
 
 import connect.util.DbUtil;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -24,6 +27,17 @@ public class DriverPanel extends javax.swing.JPanel {
     /**
      * Creates new form DriverPanel
      */
+    
+    public static boolean isDate(String dateString) {
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    df.setLenient(false); // don't allow lenient parsing
+    try {
+        df.parse(dateString);
+        return true;
+    } catch (ParseException e) {
+        return false;
+    }
+}
     public DriverPanel() {
         initComponents();
         populateTable();
@@ -56,6 +70,7 @@ public class DriverPanel extends javax.swing.JPanel {
         dateLabel = new javax.swing.JLabel();
         dateField = new javax.swing.JTextField();
         pathLabel3 = new javax.swing.JLabel();
+        dateformateLabel = new javax.swing.JLabel();
 
         jButton1.setText("jButton1");
 
@@ -123,6 +138,8 @@ public class DriverPanel extends javax.swing.JPanel {
 
         pathLabel3.setText("Set Status:");
 
+        dateformateLabel.setText("yyyy-mm-dd");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -155,16 +172,21 @@ public class DriverPanel extends javax.swing.JPanel {
                                 .addGap(9, 9, 9)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(layout.createSequentialGroup()
+                                        .addComponent(pathField, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(143, 143, 143))
+                                    .addGroup(layout.createSequentialGroup()
                                         .addComponent(locationField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(29, 29, 29)
                                         .addComponent(dateLabel)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(26, 26, 26)
-                                        .addComponent(addArrivalButton))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(pathField, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(143, 143, 143))))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(26, 26, 26)
+                                                .addComponent(addArrivalButton))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(6, 6, 6)
+                                                .addComponent(dateformateLabel))))))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(pathLabel3)
                                 .addGap(58, 58, 58)
@@ -199,12 +221,14 @@ public class DriverPanel extends javax.swing.JPanel {
                     .addComponent(addArrivalButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dateLabel)
                     .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dateformateLabel)
+                .addGap(59, 59, 59)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(inProgressButton)
                     .addComponent(finishButton)
                     .addComponent(pathLabel3))
-                .addContainerGap(270, Short.MAX_VALUE))
+                .addContainerGap(206, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -257,6 +281,9 @@ public class DriverPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         Shipment s;
         int selectedIndex = shipmentTable.getSelectedRow();
+        if (isDate(dateField.getText())==false){
+            JOptionPane.showMessageDialog(this,"Date format must be yyyy-MM-dd!");
+        }
         if (selectedIndex < 0) {
             JOptionPane.showMessageDialog(this, "Please selecr a row");
         } else {
@@ -303,6 +330,7 @@ public class DriverPanel extends javax.swing.JPanel {
     private javax.swing.JButton addArrivalButton;
     private javax.swing.JTextField dateField;
     private javax.swing.JLabel dateLabel;
+    private javax.swing.JLabel dateformateLabel;
     private javax.swing.JTextField driverIDField;
     private javax.swing.JLabel driverIDLabel;
     private javax.swing.JButton finishButton;
