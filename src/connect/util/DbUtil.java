@@ -42,8 +42,8 @@ public class DbUtil {
             Logger.getLogger(DbUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            importDataToUserDir();
             importShipmentDataToDir();
+            importDataToUserDir();
         } catch (SQLException ex) {
             Logger.getLogger(DbUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -79,7 +79,7 @@ public class DbUtil {
     }
 
     public void importDataToUserDir() throws SQLException {
-        rs = st.executeQuery("select * from t_user");
+        rs = getRS("select * from t_user");
         while (rs.next()) {
             //username and password comparison
             User u = new User();
@@ -91,23 +91,52 @@ public class DbUtil {
             u.setAddress(rs.getString(6));
             u.setLocation(rs.getString(7));
             u.setLicensePlate(rs.getString(8));
+            assignShipmentToUser(u);
             UserDirectory.getInstance().addUser(u);
         }
 
         System.out.println("users info imported" + ": " + UserDirectory.getInstance().getUsers().size());
     }
 
+    public void assignShipmentToUser(User u){
+        for(Shipment s: ShipmentDirectory.getInstance().getShipment()){
+            if(u.getId() == s.getDriverID()){
+                u.addShipment(s);
+            }
+        }
+    }
+    
     public void importShipmentDataToDir() throws SQLException {
-        rs = st.executeQuery("select * from t_shipment");
+        rs = getRS("select * from t_shipment");
         while (rs.next()) {
             Shipment s = new Shipment();
             s.setTrackingNum(rs.getInt(1));
             s.setDesAddress(rs.getString(2));
             s.setStartAddress(rs.getString(3));
             s.setDriverID(rs.getInt(4));
+
             ShipmentDirectory.getInstance().addShipment(s);
+            importArrivalsToShipment(s);
         }
         System.out.println("shipments info imported" + ": " + ShipmentDirectory.getInstance().getShipment().size());
+    }
+
+    public void importArrivalsToShipment(Shipment s) throws SQLException {
+        ResultSet tmprs = conn.createStatement().executeQuery("select * from t_arrivals where tracking_num = " + s.getTrackingNum());
+        while (tmprs.next()) {
+            String arr[] = {"", ""};
+            arr[0] = tmprs.getString(2);
+            arr[1] = tmprs.getString(3);
+            s.addArrival(arr);
+        }
+    }
+    
+    public void addArrivalsToArrTable(Shipment s, String[] arr) throws SQLException{
+        pst = conn.prepareStatement("insert into t_arrivals(tracking_num, location, date)value(?,?,?)");
+        pst.setInt(1, s.getTrackingNum());
+        pst.setString(2, arr[0]);
+        pst.setString(3, arr[1]);
+        pst.executeUpdate();
     }
 
     public void addUserToUserTable(User u) throws SQLException {
@@ -129,11 +158,11 @@ public class DbUtil {
         pst.executeUpdate();
     }
 
-    public void updateUsertoUserTable(User u) throws SQLException{
+    public void updateUsertoUserTable(User u) throws SQLException {
         removeUserFromUserTable(u.getId());
         addUserToUserTable(u);
     }
-    
+
     public void addShipmentToShipTable(Shipment s) throws SQLException {
         pst = conn.prepareStatement("insert into t_shipment(tracking_num, des_address, start_address, driver_id)value(?,?,?,?)");
         pst.setInt(1, s.getTrackingNum());
@@ -148,9 +177,8 @@ public class DbUtil {
         pst.setInt(1, trackingNum);
         pst.executeUpdate();
     }
-    
-    
-    public void updateShipmenttoShipmentTable(Shipment s) throws SQLException{
+
+    public void updateShipmenttoShipmentTable(Shipment s) throws SQLException {
         removeShipmentFromShippingTable(s.getTrackingNum());
         addShipmentToShipTable(s);
     }
