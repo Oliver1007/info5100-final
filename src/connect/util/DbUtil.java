@@ -63,7 +63,7 @@ public class DbUtil {
     public Connection getConnection() throws ClassNotFoundException {
         try {
             int log = 1;
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/new_database", "root", "Bran@123");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/new_database", "root", "991007");
             st = (Statement) conn.createStatement();
             System.out.println("connection succeed!");
         } catch (SQLException ex) {
