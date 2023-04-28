@@ -4,6 +4,7 @@
  */
 package src;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Shipment;
 import model.ShipmentDirectory;
@@ -123,9 +124,8 @@ public class TrackingPanel extends javax.swing.JPanel {
                                     .addComponent(destinationLabel)
                                     .addGap(18, 18, 18)
                                     .addComponent(destinationField, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(driverIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(driverIDLabel)))
+                                .addComponent(driverIDField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(driverIDLabel, javax.swing.GroupLayout.Alignment.LEADING))
                             .addGap(177, 177, 177))))
                 .addContainerGap(134, Short.MAX_VALUE))
         );
@@ -166,16 +166,25 @@ public class TrackingPanel extends javax.swing.JPanel {
         for (Shipment s: ShipmentDirectory.getInstance().getShipment()){
             DefaultTableModel model = (DefaultTableModel) statusTable.getModel();
             model.setRowCount(0);
-            String[] arrival = s.getArrivals().get(s.getArrivals().size()-1);
-            if (s.getTrackingNum() == Integer.parseInt(trackNumField.getText())){
+            String[] arrival = {"",""};
+            if (trackNumField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Please tracking number cannot be empty!");
+            } else if (s.getTrackingNum() == Integer.parseInt(trackNumField.getText())){
+                int size = s.getArrivals().size();
+                for (int i = 0; i < size; i++ ){
+                    Object[] row = new Object[3];
+                    row[0]=arrival[0];
+                    row[1]=arrival[1];
+                    row[2]=s.getStatus();
+                }
+                
+                
                 shipperNameField.setText(s.getShipper());
                 recipientsNameField.setText(s.getRecipients());
                 driverIDField.setText(s.getDriverID()+"");
                 destinationField.setText(s.getDesAddress());
-                Object[] row = new Object[3];
-                row[0]=arrival[0];
-                row[1]=arrival[1];
-                row[2]=s.getStatus();
+            } else {
+                JOptionPane.showMessageDialog(this, "Tracking number not found");
             }
         }
     }//GEN-LAST:event_trackButtonActionPerformed
