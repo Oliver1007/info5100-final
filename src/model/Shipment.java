@@ -35,6 +35,7 @@ public class Shipment {
 
     public Shipment() {
         arrivals = new ArrayList<>();
+        status = "pending";
     }
 
     public int getDriverID() {

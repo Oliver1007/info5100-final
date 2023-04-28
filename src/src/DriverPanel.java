@@ -4,9 +4,16 @@
  */
 package src;
 
+import connect.util.DbUtil;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Shipment;
 import model.ShipmentDirectory;
+import model.User;
+import model.UserDirectory;
 
 /**
  *
@@ -19,6 +26,7 @@ public class DriverPanel extends javax.swing.JPanel {
      */
     public DriverPanel() {
         initComponents();
+        populateTable();
     }
 
     /**
@@ -33,16 +41,21 @@ public class DriverPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         titleLabel = new javax.swing.JLabel();
         driverIDLabel = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        driverIDField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         shipmentTable = new javax.swing.JTable();
         subtitleLabel = new javax.swing.JLabel();
         pathLabel = new javax.swing.JLabel();
         pathField = new javax.swing.JTextField();
-        typeLabel = new javax.swing.JLabel();
-        typeField = new javax.swing.JTextField();
-        confirmButton = new javax.swing.JButton();
+        finishButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
+        inProgressButton = new javax.swing.JButton();
+        locationField = new javax.swing.JTextField();
+        addArrivalButton = new javax.swing.JButton();
+        locationLabel = new javax.swing.JLabel();
+        dateLabel = new javax.swing.JLabel();
+        dateField = new javax.swing.JTextField();
+        pathLabel3 = new javax.swing.JLabel();
 
         jButton1.setText("jButton1");
 
@@ -59,7 +72,7 @@ public class DriverPanel extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "packageNum", "pickup address", "destination", "status"
+                "TrackingNum", "pickup address", "destination", "status"
             }
         ) {
             Class[] types = new Class [] {
@@ -76,9 +89,12 @@ public class DriverPanel extends javax.swing.JPanel {
 
         pathLabel.setText("Path");
 
-        typeLabel.setText("Type in finished Shippment number");
-
-        confirmButton.setText("Confirm");
+        finishButton.setText("Finish");
+        finishButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finishButtonActionPerformed(evt);
+            }
+        });
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -86,6 +102,26 @@ public class DriverPanel extends javax.swing.JPanel {
                 refreshButtonActionPerformed(evt);
             }
         });
+
+        inProgressButton.setText("In Progress");
+        inProgressButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inProgressButtonActionPerformed(evt);
+            }
+        });
+
+        addArrivalButton.setText("Add New Arrival");
+        addArrivalButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addArrivalButtonActionPerformed(evt);
+            }
+        });
+
+        locationLabel.setText("Location :");
+
+        dateLabel.setText("Date/Time:");
+
+        pathLabel3.setText("Set Status:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -102,27 +138,40 @@ public class DriverPanel extends javax.swing.JPanel {
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(driverIDLabel)
                                     .addGap(58, 58, 58)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(115, 115, 115)
-                        .addComponent(pathLabel)
-                        .addGap(80, 80, 80)
-                        .addComponent(pathField, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(driverIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(91, 91, 91)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(typeLabel)
-                                .addGap(71, 71, 71)
-                                .addComponent(typeField, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(288, 288, 288)
-                        .addComponent(confirmButton))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(300, 300, 300)
-                        .addComponent(refreshButton)))
-                .addContainerGap(91, Short.MAX_VALUE))
+                        .addComponent(refreshButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(pathLabel)
+                                    .addComponent(locationLabel))
+                                .addGap(9, 9, 9)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(locationField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(29, 29, 29)
+                                        .addComponent(dateLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(26, 26, 26)
+                                        .addComponent(addArrivalButton))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(pathField, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(143, 143, 143))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(pathLabel3)
+                                .addGap(58, 58, 58)
+                                .addComponent(inProgressButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(finishButton)))))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,59 +181,142 @@ public class DriverPanel extends javax.swing.JPanel {
                 .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(driverIDLabel)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(driverIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(subtitleLabel)
                 .addGap(33, 33, 33)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(refreshButton)
-                .addGap(33, 33, 33)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(pathLabel)
                     .addComponent(pathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(40, 40, 40)
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(typeLabel)
-                    .addComponent(typeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(locationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(locationLabel)
+                    .addComponent(addArrivalButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dateLabel)
+                    .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(confirmButton)
-                .addContainerGap(236, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inProgressButton)
+                    .addComponent(finishButton)
+                    .addComponent(pathLabel3))
+                .addContainerGap(270, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         // TODO add your handling code here:
         populateTable();
+        JOptionPane.showMessageDialog(this, "Table refreshed!");
     }//GEN-LAST:event_refreshButtonActionPerformed
 
+    private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
+        // TODO add your handling code here:
+        Shipment s;
+        int selectedIndex = shipmentTable.getSelectedRow();
+        if (selectedIndex < 0) {
+            JOptionPane.showMessageDialog(this, "Please selecr a row");
+        } else {
+            DefaultTableModel model = (DefaultTableModel) shipmentTable.getModel();
+            s = (Shipment) model.getValueAt(selectedIndex, 0);
+            s.setStatus("finished");
+            try {
+                DbUtil.getInstance().updateShipmenttoShipmentTable(s);
+            } catch (SQLException ex) {
+                Logger.getLogger(DriverPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        populateTable();
+    }//GEN-LAST:event_finishButtonActionPerformed
 
-    public void populateTable(){
+    private void inProgressButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inProgressButtonActionPerformed
+        // TODO add your handling code here:
+        Shipment s;
+        int selectedIndex = shipmentTable.getSelectedRow();
+        if (selectedIndex < 0) {
+            JOptionPane.showMessageDialog(this, "Please selecr a row");
+        } else {
+            DefaultTableModel model = (DefaultTableModel) shipmentTable.getModel();
+            s = (Shipment) model.getValueAt(selectedIndex, 0);
+            s.setStatus("in progress");
+            try {
+                DbUtil.getInstance().updateShipmenttoShipmentTable(s);
+            } catch (SQLException ex) {
+                Logger.getLogger(DriverPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        populateTable();
+    }//GEN-LAST:event_inProgressButtonActionPerformed
+
+    @SuppressWarnings("empty-statement")
+    private void addArrivalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addArrivalButtonActionPerformed
+        // TODO add your handling code here:
+        Shipment s;
+        int selectedIndex = shipmentTable.getSelectedRow();
+        if (selectedIndex < 0) {
+            JOptionPane.showMessageDialog(this, "Please selecr a row");
+        } else {
+            DefaultTableModel model = (DefaultTableModel) shipmentTable.getModel();
+            s = (Shipment) model.getValueAt(selectedIndex, 0);
+            if (!locationField.getText().isEmpty() && !dateField.getText().isEmpty()) {
+                String arr[] = {"", ""};
+                arr[0] = locationField.getText();
+                arr[1] = dateField.getText();
+                s.addArrival(arr);
+                try {
+                    DbUtil.getInstance().updateShipmenttoShipmentTable(s);
+                } catch (SQLException ex) {
+                    Logger.getLogger(DriverPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "locationa and date cannot be empty!");
+            }
+        }
+        populateTable();
+    }//GEN-LAST:event_addArrivalButtonActionPerformed
+
+    public void populateTable() {
         DefaultTableModel model = (DefaultTableModel) shipmentTable.getModel();
         model.setRowCount(0);
-        for(Shipment s: ShipmentDirectory.getInstance().getShipment()){
-            Object[] row = new Object[4];
-            row[0] = s;
-            row[1] = s.getStartAddress();
-            row[2] = s.getDesAddress();
-            row[3] = s.getStatus();
-            model.addRow(row);
+        for (User u : UserDirectory.getInstance().getUsers()) {
+            if (driverIDField.getText().isEmpty()) {
+                break;
+            }
+            if (u.getType().equals("driver") && u.getId() == Integer.parseInt(driverIDField.getText())) {
+                for (Shipment s : u.getShipments()) {
+                    Object[] row = new Object[4];
+                    row[0] = s;
+                    row[1] = s.getStartAddress();
+                    row[2] = s.getDesAddress();
+                    row[3] = s.getStatus();
+                    model.addRow(row);
+                }
+            }
         }
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton confirmButton;
+    private javax.swing.JButton addArrivalButton;
+    private javax.swing.JTextField dateField;
+    private javax.swing.JLabel dateLabel;
+    private javax.swing.JTextField driverIDField;
     private javax.swing.JLabel driverIDLabel;
+    private javax.swing.JButton finishButton;
+    private javax.swing.JButton inProgressButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField locationField;
+    private javax.swing.JLabel locationLabel;
     private javax.swing.JTextField pathField;
     private javax.swing.JLabel pathLabel;
+    private javax.swing.JLabel pathLabel3;
     private javax.swing.JButton refreshButton;
     private javax.swing.JTable shipmentTable;
     private javax.swing.JLabel subtitleLabel;
     private javax.swing.JLabel titleLabel;
-    private javax.swing.JTextField typeField;
-    private javax.swing.JLabel typeLabel;
     // End of variables declaration//GEN-END:variables
 }
